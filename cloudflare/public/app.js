@@ -1,5 +1,5 @@
 // GitHub Review app: renders run documents (schema v1, context/schema.md) from /api.
-// Layout, glass, scroll motion, particles and the hero core are ported from the LinkedIn Review app.
+// Layout, glass, scroll motion and particles are ported from the LinkedIn Review app.
 // Every field is read defensively so older runs keep rendering when the schema grows.
 (function () {
 "use strict";
@@ -123,7 +123,6 @@ function viewOverview(r) {
     <div class="hero-sticky" data-exit>
       <span class="eyebrow">Review · ${fmtRun(r.run_id)}</span>
       <h1 class="hero-title"><span class="tone">GitHub score</span>${num(s.overall) ?? "–"} out of 100</h1>
-      <canvas class="core" id="core" aria-hidden="true"></canvas>
       <p class="hero-sub">${md(r.summary)}</p>
       <div class="scrollcue"><i></i>Scroll</div>
     </div>
@@ -403,7 +402,7 @@ function render(soft) {
     document.querySelectorAll("[data-rv]").forEach(el => { el._grown = true; });
   }
   fitHero(); motion();
-  if (S.tab === "overview") { startCore(); if (!soft) countUp(); }
+  if (S.tab === "overview" && !soft) countUp();
   if (!soft && S.target) focusTarget(S.target);
 }
 function focusTarget(id) {
@@ -463,7 +462,7 @@ function applyMotion() {
 }
 addEventListener("scroll", motion, { passive: true }); addEventListener("resize", () => { fitHero(); motion(); });
 
-/* ---------- particles: flow-field filaments (background) + 3D energy core (hero) ---------- */
+/* ---------- particles: flow-field filaments (background) ---------- */
 (function filaments() {
   const cv = document.getElementById("particles"); const ctx = cv.getContext("2d"); if (!ctx) return;
   let W, H, dpr, ps = [], dark = false, lastY = scrollY, t = 0; const TL = 16;
@@ -495,51 +494,6 @@ addEventListener("scroll", motion, { passive: true }); addEventListener("resize"
   size(); addEventListener("resize", size); window.__retheme = window.__retheme || []; window.__retheme.push(() => { col(); if (!motionOK) draw(); });
   if (motionOK) requestAnimationFrame(frame); else { for (let i = 0; i < TL; i++) { t += 16; step(0); } draw(); }
 })();
-
-const Core = { pts: null, raf: 0, mx: 0, my: 0 };
-function buildCore() {
-  const P = []; const R = 1, rr = 0.11;
-  for (let i = 0; i < 1500; i++) { const u = Math.random() * 6.283, v = Math.random() * 6.283; P.push({ k: 0, u, x: (R + rr * Math.cos(v)) * Math.cos(u), y: (R + rr * Math.cos(v)) * Math.sin(u), z: rr * Math.sin(v) }); }
-  for (let i = 0; i < 900; i++) { const rad = Math.pow(Math.random(), 0.7) * 0.82; const ang = Math.random() * 6.283; P.push({ k: 2, ang, rad, z: (Math.random() - 0.5) * 0.02 }); }
-  for (let g = 0; g < 18; g++) { const ang = g * 6.283 / 18; for (let i = 0; i < 34; i++) { const rad = 1.2 + Math.random() * 0.28; const off = (Math.random() - 0.5) * 0.09; P.push({ k: 3, ang: ang + off, rad, z: (Math.random() - 0.5) * 0.05 }); } }
-  return P;
-}
-function startCore() {
-  cancelAnimationFrame(Core.raf); const cv = document.getElementById("core"); if (!cv) return; const ctx = cv.getContext("2d"); if (!ctx) return;
-  if (!Core.pts) Core.pts = buildCore();
-  let W = 0, H = 0, dpr = 1; function size() { const b = cv.getBoundingClientRect(); dpr = Math.min(2, devicePixelRatio || 1); W = b.width; H = b.height; cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
-  size(); cv._size = size;
-  const t0 = performance.now();
-  function draw(now) {
-    if (!document.getElementById("core")) return;
-    const t = motionOK ? (now - t0) / 1000 : 2.2; const host = cv.closest(".scene-hero"); const hb = host ? host.getBoundingClientRect() : { top: 0 };
-    const q = Math.max(0, Math.min(1, (-hb.top) / (innerHeight * 0.6)));
-    if (q < 1 || !motionOK) {
-      const dark = isDark(); ctx.clearRect(0, 0, W, H); ctx.globalCompositeOperation = dark ? "lighter" : "source-over";
-      const ry = Math.sin(t * 0.23) * 0.55 + Core.mx * 0.6 + q * 1.2, rx = 0.62 + Math.sin(t * 0.17) * 0.22 + Core.my * 0.3 - q * 0.5, spin = t * 0.55;
-      const cy = Math.cos(ry), sy = Math.sin(ry), cx = Math.cos(rx), sx = Math.sin(rx);
-      const Sc = Math.min(W * 0.36, H * 0.4) * (1 + q * 0.5), F = 3.4;
-      for (const p of Core.pts) {
-        let x, y, z;
-        if (p.k === 0) { x = p.x; y = p.y; z = p.z; }
-        else { const a = p.ang + (p.k === 2 ? spin * 1.6 : spin * 0.15); x = Math.cos(a) * p.rad; y = Math.sin(a) * p.rad; z = p.z; }
-        if (q > 0) { const n = Math.sin(x * 12.9 + y * 78.2) * 43758.5; const r = (n - Math.floor(n)) - 0.5; x += r * q * 0.9; y += r * q * 0.7; z += r * q * 0.8; }
-        let X = x * cy + z * sy, Z = -x * sy + z * cy; const Y = y * cx - Z * sx; Z = y * sx + Z * cx;
-        const pz = F / (F + Z); const px = W / 2 + X * Sc * pz, py = H / 2 + Y * Sc * pz;
-        const depth = (1 - Z) * 0.5; const fade = 1 - q;
-        let c, al, sz;
-        if (dark) { c = p.k === 0 ? "215,240,255" : p.k === 2 ? "235,250,255" : "80,205,255"; al = (0.28 + 0.5 * depth) * fade; sz = p.k === 0 ? 1.3 : 1.6; }
-        else { c = p.k === 0 ? "15,21,19" : p.k === 2 ? "14,122,110" : "96,78,190"; al = (0.22 + 0.55 * depth) * fade; sz = p.k === 0 ? 1.15 : 1.45; }
-        ctx.fillStyle = `rgba(${c},${al.toFixed(3)})`; ctx.fillRect(px - sz / 2, py - sz / 2, sz * pz, sz * pz);
-      }
-      if (dark) { const g = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, Sc * 0.45); g.addColorStop(0, `rgba(120,220,255,${0.22 * (1 - q)})`); g.addColorStop(1, "rgba(120,220,255,0)"); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); }
-    }
-    if (motionOK) Core.raf = requestAnimationFrame(draw);
-  }
-  Core.raf = requestAnimationFrame(draw);
-}
-addEventListener("pointermove", e => { Core.mx = (e.clientX / innerWidth - 0.5); Core.my = (e.clientY / innerHeight - 0.5); }, { passive: true });
-addEventListener("resize", () => { const c = document.getElementById("core"); if (c && c._size) c._size(); });
 
 /* ---------- data ---------- */
 async function api(path, opts) {

@@ -2,11 +2,11 @@ name = "github-review"
 pages_build_output_dir = "public"
 compatibility_date = "2026-10-01"
 
-# Runs, profiles, index and Actions ticks (see scripts/publish.py). Phase 5 replaces the placeholder id
-# with the real namespace (wrangler kv namespace create github-review); local dev ignores it.
+# Runs, profiles, index and Actions ticks (see scripts/publish.py). Namespace "github-review";
+# local dev ignores the id.
 [[kv_namespaces]]
 binding = "GR_KV"
-id = "00000000000000000000000000000000"
+id = "9ba3d7fcbe294a2e959d6f88a7d004ad"
 
 [vars]
 ACCESS_TEAM_DOMAIN = "odd-paper-fda0.cloudflareaccess.com"
