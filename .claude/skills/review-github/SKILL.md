@@ -11,6 +11,8 @@ Profile: `https://github.com/felipecastro-data` (username `felipecastro-data`).
 
 Say in one line that the run started and takes ~10 minutes. Make a task list
 with the steps below. Do not ask questions unless a step is blocked.
+Start EVERY subagent prompt with the line `RUN_ID: <RUN_ID>` (agent_stats.py
+uses the first run id in a prompt to tie the subagent to this run).
 
 ## Step 0 — Preflight
 1. `python3 scripts/new_run.py` → note `RUN_ID`, `RUN_AT`, the output paths,
@@ -49,7 +51,14 @@ the four review paths, RUN_ID, RUN_AT, output `run_out`.
    error and stop.
 3. Never commit anything from `data/`: it is gitignored on purpose.
 
-## Step 5 — Report
+## Step 5 — Agent stats (Town tab)
+1. `python3 scripts/agent_stats.py <RUN_ID>` — expect `OK` (writes
+   `data/stats/<RUN_ID>.json`: numbers only, no prompts or outputs). On
+   SKIP/FAIL say so in one line and go on to the report.
+2. `python3 scripts/publish.py --stats <RUN_ID>` — expect `OK`. On FAIL, show
+   the error in one line; the run itself is already published.
+
+## Step 6 — Report
 Reply in 3–5 short lines: overall score and the four section scores (with
 delta vs last run), the weakest repo, the top fix this week, any secret hit,
 and what could not be collected. Last line: "Open the GitHub Review app to

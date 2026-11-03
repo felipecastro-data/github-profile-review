@@ -2,6 +2,7 @@
 //   GET /api/index                     index (newest first: run_id, run_at, overall, sections)
 //   GET /api/run/<RUN_ID>              run document (schema v1)
 //   GET /api/profile/<RUN_ID>          collector profile
+//   GET /api/stats/<RUN_ID>            per-agent tokens, cost and timing (scripts/agent_stats.py; Town tab)
 //   GET /api/checks                    Actions ticks {"<RUN_ID>__<action id>": {done, at}}
 //   PUT /api/checks/<RUN_ID>/<id>      body {"done": true|false}
 // Cloudflare Access sits in front of the site; this function also verifies the Access token itself so
@@ -28,7 +29,7 @@ export async function onRequest({ request, env, params }) {
     if (method === "GET" && parts.length === 1 && kind === "checks") {
       return raw((await env.GR_KV.get("checks")) || "{}");
     }
-    if (method === "GET" && parts.length === 2 && (kind === "run" || kind === "profile")) {
+    if (method === "GET" && parts.length === 2 && (kind === "run" || kind === "profile" || kind === "stats")) {
       if (!RUN_ID_RE.test(id)) return json({ error: "bad run id" }, 400);
       const value = await env.GR_KV.get(kind + ":" + id);
       return value ? raw(value) : json({ error: "not found" }, 404);

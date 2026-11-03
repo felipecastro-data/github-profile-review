@@ -19,6 +19,8 @@ Sister project: `../linkedin-multi-agent-profile-review` (same patterns).
   synthesis               → data/runs/<RUN_ID>.json   (schema v1)
   scripts/validate_run.py → scripts/publish.py → Cloudflare KV
                           (keys run:<id>, profile:<id>, index; checks = app)
+  scripts/agent_stats.py  → data/stats/<RUN_ID>.json → publish.py --stats
+                          (key stats:<id> + index usage; Town tab)
   → Cloudflare Pages "github-review" (Access) renders it
 ```
 RUN_ID = `r<YYYYMMDD>-<HHMM>` in America/Bogota time (`scripts/new_run.py`).
@@ -31,6 +33,9 @@ RUN_ID = `r<YYYYMMDD>-<HHMM>` in America/Bogota time (`scripts/new_run.py`).
   localhost only.
 - Local preview: `npm --prefix cloudflare run dev` (port 8791, launch config
   `github-review`), fed by `python3 scripts/publish.py <RUN_ID> --local`.
+- Town tab: `public/town.js`, a Three.js 0.170 lab town (ES modules from
+  jsDelivr, loaded the first time the tab opens; CSP allows only that path).
+  Robots replay the run from `stats:<id>`; every object opens a frosted card.
 
 ## Rules
 - **Rules first.** `context/rules.md` (P1–P5, J1–J4, E1–E6, A1–A4) is the

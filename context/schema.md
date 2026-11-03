@@ -107,3 +107,26 @@ Unknown values are `null` / `[]`, never guessed; say why in `missing_fields`.
 }
 ```
 Must stay under 240 KB. Older runs must keep rendering when fields are added.
+
+## stats.json (scripts/agent_stats.py → the Town tab)
+Numbers only, read from the Claude Code transcripts after publishing; never
+prompts, commands or outputs. Separate from the run document (no schema
+version bump); a run without stats still renders, the Town tab says so.
+```json
+{
+  "run_id": "", "run_at": "", "wall_s": 0, "price_basis": "",
+  "totals": {"tokens": 0, "input": 0, "cache_write": 0, "cache_read": 0, "output": 0,
+             "cost_usd": 0, "cache_saved_usd": 0, "requests": 0, "tool_calls": 0},
+  "agents": {"collector": {"model": "", "models": {}, "tokens": {"input": 0, "cache_write": 0,
+             "cache_read": 0, "output": 0, "total": 0}, "output_source": "estimated",
+             "cost_usd": 0, "cost_split": {}, "cache_saved_usd": 0, "requests": 0,
+             "tool_calls": 0, "tools": {"Bash": 0}, "web_searches": 0, "web_fetches": 0,
+             "events": [[0.0, "gh"], [3.1, "write", "file.json"]],
+             "start_offset_s": 0, "duration_s": 0}}
+}
+```
+`agents` keys: the seven subagents plus `orchestrator` (the main session).
+Event kinds: gh, collect, score, python, bash, validate, publish, start, stats,
+search, fetch (+host), read/write/edit (+file name), agent (+type), handback, tool.
+The index entry of a run with stats also carries
+`usage: {tokens, cost_usd, wall_s, tool_calls, by_agent: {agent: tokens}}`.

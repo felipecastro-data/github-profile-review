@@ -5,9 +5,12 @@ Usage:
   python3 scripts/publish.py <RUN_ID>   put profile:<id>, run:<id>, then refresh index
   python3 scripts/publish.py --all      re-put every local run and rebuild index
   python3 scripts/publish.py --check    wrangler logged in and the namespace reachable
+  python3 scripts/publish.py --stats <RUN_ID>   put stats:<id> (data/stats, from agent_stats.py) and
+                                        add its usage summary to that run's index entry (Town tab)
   add --local to any of them to write the local KV that `npm run dev` in cloudflare/ serves
 
-KV keys:  run:<RUN_ID>  profile:<RUN_ID>  index (newest first: run_id, run_at, overall, sections)
+KV keys:  run:<RUN_ID>  profile:<RUN_ID>  stats:<RUN_ID>
+          index (newest first: run_id, run_at, overall, sections, usage when stats exist)
           checks is owned by the app (Actions tab ticks); never written here.
 Namespace id: GR_KV_NAMESPACE_ID from .env or the environment, else the GR_KV id in
 cloudflare/wrangler.toml (the placeholder of zeros counts as unset). Uses cloudflare/node_modules/.bin/wrangler
@@ -84,10 +87,42 @@ def put_json(env: dict, key: str, value) -> bool:
         os.unlink(t.name)
 
 
+def usage_of(rid: str):
+    """Small per-run usage summary for the index (Town tab run comparison), or None without stats."""
+    path = ROOT / "data" / "stats" / f"{rid}.json"
+    if not path.exists():
+        return None
+    st = json.loads(path.read_text(encoding="utf-8"))
+    t = st.get("totals") or {}
+    return {"tokens": t.get("tokens"), "cost_usd": t.get("cost_usd"), "wall_s": st.get("wall_s"),
+            "tool_calls": t.get("tool_calls"),
+            "by_agent": {k: (a.get("tokens") or {}).get("total") for k, a in (st.get("agents") or {}).items()}}
+
+
 def index_entry(run: dict) -> dict:
     s = run.get("scores") or {}
-    return {"run_id": run["run_id"], "run_at": run.get("run_at"),
-            "overall": s.get("overall"), "sections": s.get("sections") or {}}
+    e = {"run_id": run["run_id"], "run_at": run.get("run_at"),
+         "overall": s.get("overall"), "sections": s.get("sections") or {}}
+    u = usage_of(run["run_id"])
+    if u:
+        e["usage"] = u
+    return e
+
+
+def publish_stats(env: dict, rid: str) -> int:
+    path = ROOT / "data" / "stats" / f"{rid}.json"
+    if not path.exists():
+        print("FAIL stats", rid, "missing", path.relative_to(ROOT))
+        return 1
+    if not put_file(env, f"stats:{rid}", path):
+        return 1
+    entries = [e for e in remote_index(env) if isinstance(e, dict) and "run_id" in e]
+    hit = next((e for e in entries if e["run_id"] == rid), None)
+    if not hit:
+        print("WARN run", rid, "is not in the index yet; publish the run first")
+        return 0
+    hit["usage"] = usage_of(rid)
+    return 0 if put_json(env, "index", entries) else 1
 
 
 def remote_index(env: dict) -> list:
@@ -122,10 +157,18 @@ def main(argv: list) -> int:
     global LOCAL
     LOCAL = "--local" in argv
     argv = [a for a in argv if a != "--local"]
-    if len(argv) != 1:
+    if len(argv) not in (1, 2):
         print(__doc__)
         return 2
     env = load_env()
+    if len(argv) == 2 and argv[0] == "--stats" and RUN_ID_RE.match(argv[1]):
+        if not LOCAL and not env.get("GR_KV_NAMESPACE_ID"):
+            print("FAIL GR_KV_NAMESPACE_ID is not set in .env (copy .env.example)")
+            return 1
+        return publish_stats(env, argv[1])
+    if len(argv) != 1:
+        print(__doc__)
+        return 2
     arg = argv[0]
     if arg == "--check":
         return check(env)
@@ -150,6 +193,9 @@ def main(argv: list) -> int:
         prof = ROOT / "data" / "profiles" / f"{rid}.json"
         if prof.exists():
             ok &= put_file(env, f"profile:{rid}", prof)
+        stats = ROOT / "data" / "stats" / f"{rid}.json"
+        if arg == "--all" and stats.exists():
+            ok &= put_file(env, f"stats:{rid}", stats)
         if put_file(env, f"run:{rid}", run_path):
             entries[rid] = index_entry(json.loads(run_path.read_text(encoding="utf-8")))
         else:
