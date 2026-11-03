@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "github-review",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "cloudflare", "run", "dev"],
+      "port": 8791
+    }
+  ]
+}

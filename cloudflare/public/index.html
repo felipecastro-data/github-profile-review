@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script src="theme.js"></script>
+<title>GitHub Review</title>
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="favicon-32.png" sizes="32x32">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="GitHub Review">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#F6F7F5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0B0F0E" media="(prefers-color-scheme: dark)">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="app.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+<div class="aurora" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+<canvas id="particles" aria-hidden="true"></canvas>
+<div class="app">
+  <div class="nav-wrap"><nav class="nav" id="nav" aria-label="Sections"></nav></div>
+  <main id="main">
+    <div class="empty glass"><span class="eyebrow">Loading</span><h2>Fetching your latest review</h2><p class="muted">Each run of <code>/review-github</code> lands here with scores, findings, rewrites and an action list.</p></div>
+  </main>
+</div>
+<nav class="bottombar" id="bottombar" aria-label="Sections"></nav>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>

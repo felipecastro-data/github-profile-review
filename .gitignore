@@ -1,0 +1,13 @@
+# Run data stays local
+data/*
+.env
+__pycache__/
+venv/
+.DS_Store
+
+# Cloudflare Pages
+cloudflare/public/rules.json
+cloudflare/.dev.vars
+cloudflare/.wrangler/
+.wrangler/
+cloudflare/node_modules/
