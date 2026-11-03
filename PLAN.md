@@ -34,6 +34,6 @@ Flow: Collector ∥ Benchmark → 4 reviewers in parallel → Synthesis → vali
 2. Scaffold: agents, skill, `known_context.md`, `rules.md`, run schema — done
 3. Collector + scripts (`new_run`, `collect`, `scoring`, `validate_run`, `publish`) — done
 4. Web app — done (LinkedIn Review layout: liquid glass, scroll story, particles; preview with sample data in local KV)
-5. Cloudflare deploy + icons + Access
+5. Cloudflare deploy + icons + Access — done (github-review.pages.dev, KV `github-review`, Access "GitHub Review" on both domains)
 6. First real run + tuning
 7. Repo README (following the rules) + git push

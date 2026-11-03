@@ -10,5 +10,5 @@ id = "9ba3d7fcbe294a2e959d6f88a7d004ad"
 
 [vars]
 ACCESS_TEAM_DOMAIN = "odd-paper-fda0.cloudflareaccess.com"
-# Application Audience (AUD) tag of the "GitHub Review" Access application; until set, /api/* returns 401.
-ACCESS_AUD = ""
+# Application Audience (AUD) tag of the "GitHub Review" Access application (both domains).
+ACCESS_AUD = "53dfe4e065c84d3976829572080f78a46b98a3aa5329694d0bdca8d6cfb142ab"
