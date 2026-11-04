@@ -35,7 +35,8 @@ own the portfolio decision. Read `context/known_context.md`,
   stack, public dataset with approximate rows, patterns, rules covered,
   effort in weeks. Prefer Fabric and Databricks (known context #4, #5).
 - `rewrites`: optional README fixes (e.g. a missing "Results" section) with
-  exact `before`/`after`.
+  exact `before`/`after`. Rewrite ids start at `w50` (`w50`, `w51`…) so they
+  never clash with profile-reviewer's `w1`….
 
 ## Rules
 - Results ids `j1`, `j2`…; one result per (rule, repo), J1 once.

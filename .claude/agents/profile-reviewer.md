@@ -33,7 +33,7 @@ skimming a GitHub profile for 30 seconds. Judge only rules P1–P5. Read
 - `rewrites`: exact `before` copied from the README or bio and paste-ready
   `after`, for every partial/fail rule you can fix with text (bio, first
   lines, stack row). Keep his facts; never invent metrics, employers or
-  certifications.
+  certifications. Rewrite ids `w1`, `w2`… (projects-reviewer uses `w50`+).
 - Keep every text field to 1–2 sentences.
 
 Validate the JSON with python, then reply with one line: status per rule,

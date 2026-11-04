@@ -88,7 +88,7 @@ Unknown values are `null` / `[]`, never guessed; say why in `missing_fields`.
 - Finding ids are prefixed per agent: profile `p*`, projects `j*`,
   engineering `e*`, architect `a*` (so they never collide).
 - `rewrites` only from profile and projects reviewers; `portfolio` only from
-  the projects reviewer.
+  the projects reviewer. Rewrite ids: profile `w1`–`w49`, projects `w50`+.
 
 ## run.json (synthesis → the app)
 ```json
