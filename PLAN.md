@@ -27,7 +27,7 @@ Flow: Collector ∥ Benchmark → 4 reviewers in parallel → Synthesis → vali
 - Pages + Pages Function + KV, behind Cloudflare Access (only Felipe). Published with wrangler.
 - Tabs: Overview, Profile, Projects (per repo + replacement briefs), Actions (checklist saved to KV), History (run picker + score trend), Sources.
 - Light/dark, mobile, home-screen icon from the magnifier-over-code image.
-- 3D Office tab: later, from Felipe's own description.
+- Town tab (the planned 3D Office): a three.js lab town that replays each run from agent stats.
 
 ## Phases
 1. Plan and decisions — done
@@ -35,5 +35,5 @@ Flow: Collector ∥ Benchmark → 4 reviewers in parallel → Synthesis → vali
 3. Collector + scripts (`new_run`, `collect`, `scoring`, `validate_run`, `publish`) — done
 4. Web app — done (LinkedIn Review layout: liquid glass, scroll story, particles; preview with sample data in local KV)
 5. Cloudflare deploy + icons + Access — done (github-review.pages.dev, KV `github-review`, Access "GitHub Review" on both domains)
-6. First real run + tuning
-7. Repo README (following the rules) + git push
+6. First real run + tuning — done (`r20261103-1619`; rewrite ids split: profile `w1`–`w49`, projects `w50`+; Town tab + 3D upgrade)
+7. Repo README (following the rules) + git push — done

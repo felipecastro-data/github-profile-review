@@ -183,7 +183,9 @@ def main(argv: list) -> int:
         print(__doc__)
         return 2
 
-    ok, entries = True, {e["run_id"]: e for e in remote_index(env) if isinstance(e, dict) and "run_id" in e}
+    # --all rebuilds the index from local runs only, so runs deleted from data/ drop out
+    old = [] if arg == "--all" else remote_index(env)
+    ok, entries = True, {e["run_id"]: e for e in old if isinstance(e, dict) and "run_id" in e}
     for rid in ids:
         run_path = ROOT / "data" / "runs" / f"{rid}.json"
         if not run_path.exists():
