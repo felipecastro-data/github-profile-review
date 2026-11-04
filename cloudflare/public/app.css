@@ -484,7 +484,6 @@ a.row:hover .tx{color:var(--accent)}
   .of-tile b{font-size:1.3rem}
 }
 @media (prefers-reduced-motion:reduce){.of-tag[data-state="working"] i{animation:none}}
-</style>
 
 /* ---------- Town tab additions (tw-*): taller stage, frosted cards after Post Manager ---------- */
 .tw-wrap{display:flex;flex-direction:column;gap:18px}
