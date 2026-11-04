@@ -509,6 +509,9 @@ a.row:hover .tx{color:var(--accent)}
 .tw-go{margin-top:12px;font-size:.84rem}
 .tw-hint{position:absolute;left:0;top:0;z-index:3;pointer-events:none;padding:5px 11px;border-radius:999px;font-size:.76rem;font-weight:600;color:var(--ink);background:var(--glass);border:1px solid var(--g-border);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);white-space:nowrap}
 .tw-hint[hidden]{display:none}
+.tw-town .of-tag{gap:5px;padding:3px 9px 3px 6px;font-size:.7rem}
+.tw-town .of-tag i{width:7px;height:7px}
+.tw-town .of-say{font-size:.7rem;padding:4px 9px 4px 8px}
 @media (max-width:700px){
   .tw-town.of-card{height:min(76vh,640px);min-height:480px}
   .of-agent.tw-card{top:auto;left:10px;right:10px;bottom:10px;width:auto;max-height:56%;padding:16px}
