@@ -5,7 +5,7 @@
 "use strict";
 
 const ICONS = {
-  town: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M10 21V5l2-2 2 2v16"/><path d="M4 21v-7h6M14 12h6v9"/><path d="M12 3V1"/></svg>',
+  office: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M10 21V5l2-2 2 2v16"/><path d="M4 21v-7h6M14 12h6v9"/><path d="M12 3V1"/></svg>',
   overview: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg>',
   profile: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2.5"/><path d="M5.5 16.5c.8-1.8 2-2.6 3.5-2.6s2.7.8 3.5 2.6M15 9h3M15 13h3"/></svg>',
   projects: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M10 12l-2 2 2 2M14 12l2 2-2 2"/></svg>',
@@ -18,7 +18,7 @@ const ICONS = {
   merge: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v5a5 5 0 0 0 5 5h7M18 4v16M14 10l4 4-4 4"/></svg>'
 };
 const PLUS = '<span class="plus"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 1v10M1 6h10"/></svg></span>';
-const TABS = [["overview", "Overview"], ["town", "Town"], ["profile", "Profile"], ["projects", "Projects"], ["actions", "Actions"], ["history", "History"], ["sources", "Sources"]];
+const TABS = [["overview", "Overview"], ["office", "Office"], ["profile", "Profile"], ["projects", "Projects"], ["actions", "Actions"], ["history", "History"], ["sources", "Sources"]];
 const SECTIONS = [["profile", "Profile", "P", "var(--med)"], ["projects", "Projects", "J", "var(--accent)"], ["engineering", "Engineering", "E", "var(--high)"], ["architect", "Architect", "A", "var(--violet)"]];
 const ST = { pass: ["good", "Pass", "✓"], partial: ["high", "Partial", "◐"], fail: ["crit", "Fail", "✕"], na: ["", "N/A", "–"] };
 const HORIZONS = [["this_week", "This week"], ["this_month", "This month"], ["this_quarter", "This quarter"]];
@@ -384,18 +384,18 @@ function viewSources(r) {
 }
 
 /* ---------- render ---------- */
-// Town tab lives in town.js (Three.js, loaded on first open); stats load per run on demand.
+// Office tab (3D scene) lives in town.js (Three.js, loaded on first open); stats load per run on demand.
 function viewTown(r) {
-  if (!window.Town) return `<div class="empty glass"><span class="eyebrow">Town</span><h2>The 3D town didn't load</h2><p class="muted">Reload the page to try again.</p></div>`;
+  if (!window.Town) return `<div class="empty glass"><span class="eyebrow">Office</span><h2>The 3D office didn't load</h2><p class="muted">Reload the page to try again.</p></div>`;
   if (!(r.run_id in S.stats)) loadStats(r.run_id);
   return Town.view({ run: r, stats: S.stats[r.run_id], index: S.index, rules: S.rules, dark: isDark() });
 }
 async function loadStats(id) {
   S.stats[id] = undefined;
   try { S.stats[id] = await api("stats/" + encodeURIComponent(id)); } catch (e) { S.stats[id] = null; }
-  if (S.tab === "town" && S.runId === id) render(true);
+  if (S.tab === "office" && S.runId === id) render(true);
 }
-const VIEWS = { overview: viewOverview, town: viewTown, profile: viewProfile, projects: viewProjects, actions: viewActions, history: viewHistory, sources: viewSources };
+const VIEWS = { overview: viewOverview, office: viewTown, profile: viewProfile, projects: viewProjects, actions: viewActions, history: viewHistory, sources: viewSources };
 function render(soft) {
   renderNav();
   const main = $("#main");
@@ -405,7 +405,7 @@ function render(soft) {
   if (!r) { main.innerHTML = `<div class="empty glass"><span class="eyebrow">No reviews yet</span><h2>Run your first review</h2><p>In Claude Code, in the github-profile-review folder, type <code>/review-github</code>. The result appears here.</p></div>`; return; }
   document.title = TABS.find(t => t[0] === S.tab)[1] + " · GitHub Review";
   const y = scrollY, open = [...document.querySelectorAll("details.item[open]")].map(d => d.id);
-  if (S.tab !== "town" && window.Town) Town.detach();
+  if (S.tab !== "office" && window.Town) Town.detach();
   try { main.innerHTML = VIEWS[S.tab](r); }
   catch (e) { console.error(e); main.innerHTML = `<div class="empty glass"><span class="eyebrow">Error</span><h2>This run couldn't be shown</h2><p class="muted">${esc(e.message)}</p></div>`; return; }
   if (soft) {
@@ -415,7 +415,7 @@ function render(soft) {
     document.querySelectorAll("[data-rv]").forEach(el => { el._grown = true; });
   }
   fitHero(); motion();
-  if (S.tab === "town" && window.Town) Town.attach();
+  if (S.tab === "office" && window.Town) Town.attach();
   if (S.tab === "overview" && !soft) countUp();
   if (!soft && S.target) focusTarget(S.target);
 }
@@ -439,6 +439,7 @@ function countUp() {
 }
 
 function go(tab, target) {
+  tab = tabAlias(tab);
   S.tab = TABS.some(t => t[0] === tab) ? tab : "overview"; S.target = target || null;
   ls.set("gr.tab", S.tab);
   const h = "#" + S.tab + (S.target ? ":" + S.target : "");
@@ -446,7 +447,9 @@ function go(tab, target) {
   render();
   if (!S.target) scrollTo({ top: 0 });
 }
-function fromHash() { const [tab, target] = decodeURIComponent(location.hash.slice(1)).split(":"); return { tab, target }; }
+// "town" was the Office tab's old id; keep old links and saved tabs working.
+const tabAlias = (t) => (t === "town" ? "office" : t);
+function fromHash() { const [tab, target] = decodeURIComponent(location.hash.slice(1)).split(":"); return { tab: tabAlias(tab), target }; }
 
 /* ---------- scroll motion ---------- */
 let ticking = false;
@@ -538,7 +541,7 @@ document.addEventListener("click", async e => {
   const nb = e.target.closest("[data-tab]");
   if (nb) { go(nb.dataset.tab, nb.dataset.target); return; }
   const rb = e.target.closest("[data-run]");
-  if (rb) { try { await selectRun(rb.dataset.run); go(S.tab === "town" ? "town" : "overview"); } catch (err) { toast("Couldn't load that run"); } return; }
+  if (rb) { try { await selectRun(rb.dataset.run); go(S.tab === "office" ? "office" : "overview"); } catch (err) { toast("Couldn't load that run"); } return; }
   const cp = e.target.closest("[data-copy]");
   if (cp) {
     e.preventDefault(); const el = document.querySelector(`[data-text="${CSS.escape(cp.dataset.copy)}"]`); const txt = el ? el.textContent : "";
@@ -573,7 +576,8 @@ document.addEventListener("visibilitychange", async () => {
 });
 
 /* ---------- start ---------- */
-{ const h = fromHash(); S.tab = TABS.some(t => t[0] === h.tab) ? h.tab : ls.get("gr.tab") || "overview"; S.target = h.target || null; }
+{ const h = fromHash(); { const saved = tabAlias(ls.get("gr.tab")); S.tab = TABS.some(t => t[0] === h.tab) ? h.tab : TABS.some(t => t[0] === saved) ? saved : "overview"; } S.target = h.target || null; }
+if (/^#town\b/.test(location.hash)) history.replaceState(null, "", location.hash.replace(/^#town/, "#office"));
 renderNav();
 (async () => {
   try {

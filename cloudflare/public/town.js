@@ -1,4 +1,4 @@
-/* GitHub Review — Town tab. A Three.js 0.170 lab town (ES modules from jsDelivr, loaded the first
+/* GitHub Review — Office tab (file kept as town.js). A Three.js 0.170 lab office building (ES modules from jsDelivr, loaded the first
    time the tab opens) where the orchestrator and the seven subagents of /review-github replay one run
    from its stats file (scripts/agent_stats.py): who works when, what each tool call was (kind plus a
    website host or file name only), tokens and approximate cost. Every object opens a frosted card.
@@ -1603,7 +1603,7 @@ const stat = (id) => (O.stats && O.stats.agents && O.stats.agents[id]) || null;
 function buildStage() {
   const st = document.createElement("div");
   st.className = "of-stage";
-  st.innerHTML = `<canvas class="of-canvas" aria-label="3D lab town: the orchestrator and seven subagents replaying the selected run. Click any building, robot, pod or the spaceship for its numbers."></canvas>
+  st.innerHTML = `<canvas class="of-canvas" aria-label="3D lab office: the orchestrator and seven subagents replaying the selected run. Click any building, robot, pod or the spaceship for its numbers."></canvas>
     <div class="of-labels off"></div>
     <div class="tw-hint" hidden></div>
     <div class="of-msg" role="status" hidden></div>
@@ -1637,7 +1637,7 @@ function showMsg(text) { O.msg.textContent = text || ""; O.msg.hidden = !text; }
 async function ensureScene() {
   if (O.town || O.booting) return;
   O.booting = true;
-  showMsg("Building the town…");
+  showMsg("Building the office…");
   try {
     const create = await loadScene();
     if (document.fonts && document.fonts.ready) await document.fonts.ready;
@@ -1658,7 +1658,7 @@ async function ensureScene() {
   } catch (e) {
     console.error(e);
     scenePromise = null;
-    showMsg("Couldn't load the 3D town. It needs cdn.jsdelivr.net; the numbers below still work.");
+    showMsg("Couldn't load the 3D office. It needs cdn.jsdelivr.net; the numbers below still work.");
   } finally {
     O.booting = false;
   }
@@ -1971,15 +1971,15 @@ function view(ctx) {
   const card = `<section class="glass of-card tw-town">
     <div class="of-slot" id="twSlot"></div>
     <div class="of-head">
-      <span class="eyebrow">Town${r ? " · " + esc(fmtDay(r.run_at)) : ""}</span>
+      <span class="eyebrow">Office${r ? " · " + esc(fmtDay(r.run_at)) : ""}</span>
       <div class="of-tools"><button class="of-btn" type="button" data-tw="reset">Reset view</button><button class="of-btn" type="button" data-tw="pause" aria-pressed="${O.userPaused}">${O.userPaused ? "Play" : "Pause"}</button></div>
-      <h2 class="of-title"><span class="tone">Eight agents,</span>one lab town</h2>${note ? `<span class="of-note">${esc(note)}</span>` : ""}
+      <h2 class="of-title"><span class="tone">Eight agents,</span>one office</h2>${note ? `<span class="of-note">${esc(note)}</span>` : ""}
     </div>
     <div class="of-status" id="twStatus" aria-live="polite"><i></i><div><b></b><span></span></div></div>
   </section>`;
   const facts = r ? runTiles(r) : "";
   if (!st) {
-    const empty = st === null ? `<section class="glass card"><div class="sec-h"><h2>No agent usage for this run yet</h2></div><p class="muted">Step 5 of <code>/review-github</code> runs <code>scripts/agent_stats.py</code> and publishes tokens, cost and timing per agent. Until then the town runs in ambient mode; every building, robot, pod and the spaceship still opens its card.</p></section>` : "";
+    const empty = st === null ? `<section class="glass card"><div class="sec-h"><h2>No agent usage for this run yet</h2></div><p class="muted">Step 5 of <code>/review-github</code> runs <code>scripts/agent_stats.py</code> and publishes tokens, cost and timing per agent. Until then the office runs in ambient mode; every building, robot, pod and the spaceship still opens its card.</p></section>` : "";
     return `<div class="tw-wrap">${card}${facts}${empty}</div>`;
   }
   return `<div class="tw-wrap">${card}${tiles(st)}${timeline(st)}

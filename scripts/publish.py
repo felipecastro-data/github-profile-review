@@ -6,7 +6,7 @@ Usage:
   python3 scripts/publish.py --all      re-put every local run and rebuild index
   python3 scripts/publish.py --check    wrangler logged in and the namespace reachable
   python3 scripts/publish.py --stats <RUN_ID>   put stats:<id> (data/stats, from agent_stats.py) and
-                                        add its usage summary to that run's index entry (Town tab)
+                                        add its usage summary to that run's index entry (Office tab)
   add --local to any of them to write the local KV that `npm run dev` in cloudflare/ serves
 
 KV keys:  run:<RUN_ID>  profile:<RUN_ID>  stats:<RUN_ID>
@@ -88,7 +88,7 @@ def put_json(env: dict, key: str, value) -> bool:
 
 
 def usage_of(rid: str):
-    """Small per-run usage summary for the index (Town tab run comparison), or None without stats."""
+    """Small per-run usage summary for the index (Office tab run comparison), or None without stats."""
     path = ROOT / "data" / "stats" / f"{rid}.json"
     if not path.exists():
         return None

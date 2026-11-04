@@ -51,7 +51,7 @@ the four review paths, RUN_ID, RUN_AT, output `run_out`.
    error and stop.
 3. Never commit anything from `data/`: it is gitignored on purpose.
 
-## Step 5 — Agent stats (Town tab)
+## Step 5 — Agent stats (Office tab)
 1. `python3 scripts/agent_stats.py <RUN_ID>` — expect `OK` (writes
    `data/stats/<RUN_ID>.json`: numbers only, no prompts or outputs). On
    SKIP/FAIL say so in one line and go on to the report.

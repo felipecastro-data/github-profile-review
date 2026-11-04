@@ -8,13 +8,13 @@ This is a Claude Code multi-agent system that reviews a GitHub profile against a
 - Next, **four reviewers** run in parallel: Profile, Projects, Engineering signal and Architect layer.
 - Finally, a **synthesis** agent merges their reviews into one validated, scored run.
 
-A private Cloudflare web app shows the result on desktop and iPhone. Its 3D **Town** tab
-replays each run, with the agents as robots in a lab town.
+A private Cloudflare web app shows the result on desktop and iPhone. Its 3D **Office** tab
+replays each run, with the agents as robots in a lab office building.
 
 One command runs everything: `/review-github`. The system uses only a Claude subscription: Claude Code subagents plus
 the `gh` CLI, with no API keys.
 
-![The Town tab replaying a /review-github run, dark mode](docs/town-dark.jpg)
+![The Office tab replaying a /review-github run, dark mode](docs/office-dark.jpg)
 
 ![Claude Code](https://img.shields.io/badge/Claude%20Code-8%20agents-D97757)
 ![GitHub CLI](https://img.shields.io/badge/gh%20CLI-read--only-181717?logo=github&logoColor=white)
@@ -37,7 +37,7 @@ the `gh` CLI, with no API keys.
 - [Results and scorecard](#results-and-scorecard)
 - [Pipeline metrics](#pipeline-metrics)
 - [The web app](#the-web-app)
-- [The Town](#the-town)
+- [The Office](#the-office)
 - [Design choices](#design-choices)
 - [Project layout](#project-layout)
 - [Run it yourself](#run-it-yourself)
@@ -77,7 +77,7 @@ This system makes the review **specific, evidenced and repeatable**:
 | **Validation** | `validate_run.py` checks the schema version, required sections, unique ids across findings, rewrites and briefs, and that every reference resolves. Nothing is published unless it prints OK |
 | **Agent telemetry** | `agent_stats.py` reads the Claude Code transcripts and records tokens, approximate cost, timing and tool-call kinds per agent (numbers only) |
 | **Web app** | Vanilla JS with no build step and seven tabs. Light/dark themes, a mobile bottom bar and a home-screen app on iPhone. Actions ticks are saved to KV and sync across devices |
-| **The Town** | A three.js replay of each run: robots, rooms, a tower, a rocket that launches on publish, score pillars per repo and frosted info cards on click |
+| **The Office** | A three.js replay of each run: robots, rooms, a tower, a drone, a rocket that launches on publish, score pillars per repo and frosted info cards on click |
 
 ## Architecture
 
@@ -104,7 +104,7 @@ flowchart TB
         direction LR
         KV[("Workers KV")]
         F["Pages Function<br/>/api/* + JWT check"]
-        P["Web app<br/>7 tabs + Town"]
+        P["Web app<br/>7 tabs incl. Office"]
     end
 
     GH -->|"GraphQL + REST"| CO
@@ -203,7 +203,7 @@ sequenceDiagram
 | 2 | 4 reviewers | Run in parallel; each writes one JSON file to `data/work/<RUN_ID>/` |
 | 3 | Synthesis | Merges the reviews, runs `scoring.py`, writes `data/runs/<RUN_ID>.json` |
 | 4 | Orchestrator | `validate_run.py` → `publish.py` to Workers KV |
-| 5 | Orchestrator | `agent_stats.py` → `publish.py --stats` for the Town tab |
+| 5 | Orchestrator | `agent_stats.py` → `publish.py --stats` for the Office tab |
 | 6 | Orchestrator | A short report: score, top fixes, plan, what changed |
 
 ## Results and scorecard
@@ -378,7 +378,7 @@ iPhone. A run picker switches between every published run.
 | Tab | Shows |
 |---|---|
 | **Overview** | The overall score with the headline fix, section bars, the top fixes and the full rule × repo scorecard |
-| **Town** | The 3D pipeline replay plus agent metrics (below) |
+| **Office** | The 3D pipeline replay plus agent metrics (below) |
 | **Profile** | Header card, P1–P5 with evidence and fixes, paste-ready bio and README rewrites |
 | **Projects** | Portfolio verdicts, repo scores, per-repo findings across J, E and A, replacement briefs |
 | **Actions** | This week / month / quarter plan with a checklist saved to KV |
@@ -398,28 +398,30 @@ iPhone. A run picker switches between every published run.
 
 <img src="docs/app-projects.jpg" alt="Projects tab in dark mode: portfolio verdicts and repo scores" width="100%">
 
-## The Town
+## The Office
 
-The Town is a 3D tab ([`cloudflare/public/town.js`](cloudflare/public/town.js)). It uses three.js 0.170 ES modules from
+The Office is a 3D tab ([`cloudflare/public/town.js`](cloudflare/public/town.js)). It uses three.js 0.170 ES modules from
 jsDelivr and loads the first time the tab opens. It shows the **pipeline**, not the analysis.
 
-![The Town in light mode](docs/town-light.jpg)
+![The Office in light mode](docs/office-light.jpg)
 
-- **The scene:** a white lab town with a central tower and a multi-tier platform. Each agent has an alcove room (server
-  racks, monitor desks, a hologram table), and a plaza holds a radial compute core and a rocket on its deploy pad.
+- **The scene:** one white lab building seen from above: two terrace levels, a central tower with a glowing
+  glass slot and a rooftop compute core. Each agent has its own room (a library, review labs with wall screens,
+  a command deck), and a rocket waits on its deploy pad.
 - **Robots and replay:** eight robots with floating heads and glowing visors replay the run as a loop of under a minute (about 17× for this run). They walk to
   the briefing, work in their rooms and hand results back. Status bubbles show what each one is doing,
   based on its real tool calls.
+- **Benchmark drone:** a drone with a glass brain flies out while the benchmark agent studies the north stars.
 - **Score pillars:** one hex hologram pillar per in-scope repo, coloured by its score.
 - **Publishing:** the rocket launches when the run is published.
 - **Interaction:** click any robot, room, pillar or the core to open a frosted card with its goal, tokens, cost,
   time and tool calls. Drag to turn and scroll to zoom. Reset view and Pause are in the corner.
-- **Rendering:** ACES tone mapping, soft shadows, selective bloom on neon edges and static batching keep the frame
+- **Rendering:** neutral (light) and ACES (dark) tone mapping, soft shadows, selective bloom on neon edges and static batching keep the frame
   rate near 60 fps on a MacBook. It runs in light and dark themes.
 - **Metrics below the scene:** totals, a **Run replay** timeline, **Where the cost goes** by token type, and
   **Compare runs** across every run with stats.
 
-![Run replay, cost by token type and run comparison](docs/town-metrics.jpg)
+![Run replay, cost by token type and run comparison](docs/office-metrics.jpg)
 
 The data comes from `scripts/agent_stats.py`. It writes only numbers, tool-event kinds and generic file
 names, never prompts, commands or profile content.
@@ -462,11 +464,11 @@ scripts/
   scoring.py                        scores exactly as rules.md defines them
   validate_run.py                   checks a run before publishing
   publish.py                        puts runs, profiles, stats and the index into KV (--local for dev)
-  agent_stats.py                    per-agent tokens, cost, timing for the Town tab
+  agent_stats.py                    per-agent tokens, cost, timing for the Office tab
   build_app.py                      rules.md → public/rules.json
 cloudflare/
   functions/api/[[path]].js         /api/* over KV, verifies the Access JWT
-  public/                           index.html, app.js, app.css, theme.js, town.js, icons, manifest, _headers (CSP)
+  public/                           index.html, app.js, app.css, theme.js, town.js (Office tab), icons, manifest, _headers (CSP)
   wrangler.toml                     KV binding, Access team domain and AUD
 docs/                               screenshots used in this README
 data/                               runs, profiles, stats, work files (gitignored)

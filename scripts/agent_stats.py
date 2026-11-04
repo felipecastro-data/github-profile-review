@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Per-agent token, cost and timing stats for one run, for the app's Town tab.
+"""Per-agent token, cost and timing stats for one run, for the app's Office tab.
 
 Ported from the LinkedIn Review project. Reads the Claude Code transcripts of
 the session that ran /review-github (one file per subagent plus the main

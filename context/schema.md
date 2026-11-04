@@ -108,10 +108,10 @@ Unknown values are `null` / `[]`, never guessed; say why in `missing_fields`.
 ```
 Must stay under 240 KB. Older runs must keep rendering when fields are added.
 
-## stats.json (scripts/agent_stats.py → the Town tab)
+## stats.json (scripts/agent_stats.py → the Office tab)
 Numbers only, read from the Claude Code transcripts after publishing; never
 prompts, commands or outputs. Separate from the run document (no schema
-version bump); a run without stats still renders, the Town tab says so.
+version bump); a run without stats still renders, the Office tab says so.
 ```json
 {
   "run_id": "", "run_at": "", "wall_s": 0, "price_basis": "",
