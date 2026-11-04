@@ -82,41 +82,40 @@ This system makes the review **specific, evidenced and repeatable**:
 ## Architecture
 
 ```mermaid
-flowchart LR
-    subgraph CC["Claude Code · /review-github"]
-        O{{"Orchestrator<br/>SKILL.md"}}
-        CO["Collector<br/>gh api"]
-        BM["Benchmark<br/>north stars"]
+flowchart TB
+    GH(["GitHub<br/>felipecastro-data"])
+    NS(["North-star profiles<br/>josephmachado · EcZachly · sspaeti"])
+    K["rules.md + known_context.md<br/>read first by every agent"]
+
+    subgraph CC["Claude Code · /review-github orchestrator"]
+        direction TB
+        CO["Collector<br/>gh api GETs"]
+        BM["Benchmark<br/>examples only"]
         PR["Profile<br/>P1–P5"]
         JR["Projects<br/>J1–J4"]
         ER["Engineering<br/>E1–E6"]
         AR["Architect<br/>A1–A4"]
-        SY["Synthesis<br/>merge + score"]
+        SY["Synthesis<br/>merge + scoring.py"]
         V["validate_run.py"]
         T["agent_stats.py"]
     end
 
-    GH(["GitHub<br/>felipecastro-data"])
-    NS(["North-star profiles<br/>josephmachado · EcZachly · sspaeti"])
-    K["rules.md<br/>known_context.md"]
-
-    O --> CO & BM
-    GH -->|"GraphQL + REST GETs"| CO
-    NS -->|"gh api"| BM
-    CO -->|"profile JSON"| PR & JR & ER & AR
-    K -.-> CO & BM & PR & JR & ER & AR & SY
-    PR & JR & ER & AR -->|"*_review.json"| SY
-    BM -->|"benchmark.json"| SY
-    SY -->|"run JSON (schema v1)"| V
-    V -->|"publish.py · wrangler"| KV
-    T -->|"stats JSON"| KV
-
-    subgraph CF["Cloudflare"]
+    subgraph CF["Cloudflare · behind Access"]
+        direction LR
         KV[("Workers KV<br/>run · profile · stats · index · checks")]
-        F["Pages Function<br/>/api/* + Access JWT check"]
-        P["Pages site<br/>7 tabs + Town"]
+        F["Pages Function<br/>/api/* + JWT check"]
+        P["Web app<br/>7 tabs + Town"]
     end
 
+    GH -->|"GraphQL + REST"| CO
+    NS -->|"gh api"| BM
+    K -.-> CC
+    CO -->|"profile JSON"| PR & JR & ER & AR
+    PR & JR & ER & AR -->|"*_review.json"| SY
+    BM -->|"benchmark.json"| SY
+    SY -->|"run JSON v1"| V
+    V -->|"publish.py"| KV
+    T -->|"stats JSON"| KV
     KV --> F --> P
 ```
 
