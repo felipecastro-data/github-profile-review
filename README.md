@@ -83,9 +83,9 @@ This system makes the review **specific, evidenced and repeatable**:
 
 ```mermaid
 flowchart TB
-    GH(["GitHub<br/>felipecastro-data"])
-    NS(["North-star profiles<br/>josephmachado · EcZachly · sspaeti"])
-    K["rules.md + known_context.md<br/>read first by every agent"]
+    GH(["GitHub profile<br/>+ pinned repos"])
+    NS(["3 north-star<br/>profiles"])
+    K["rules.md<br/>known_context.md"]
 
     subgraph CC["Claude Code · /review-github orchestrator"]
         direction TB
@@ -95,14 +95,14 @@ flowchart TB
         JR["Projects<br/>J1–J4"]
         ER["Engineering<br/>E1–E6"]
         AR["Architect<br/>A1–A4"]
-        SY["Synthesis<br/>merge + scoring.py"]
+        SY["Synthesis<br/>+ scoring.py"]
         V["validate_run.py"]
         T["agent_stats.py"]
     end
 
     subgraph CF["Cloudflare · behind Access"]
         direction LR
-        KV[("Workers KV<br/>run · profile · stats · index · checks")]
+        KV[("Workers KV")]
         F["Pages Function<br/>/api/* + JWT check"]
         P["Web app<br/>7 tabs + Town"]
     end
